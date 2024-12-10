@@ -6,18 +6,29 @@ from scipy.stats import shapiro, ttest_rel, wilcoxon
 
 if __name__ == "__main__":
     df = pd.read_csv("results.csv")
-    plot = sns.catplot(data=df, x="Instance", y="Time", hue="Language")
-    #plt.title("Porównanie czasów znalezienia rozwiązania między C++ a Julią")
+    sns.set_context("notebook", font_scale=2.0)
+    plot = sns.catplot(
+        data=df, 
+        x="Instance", 
+        y="Time", 
+        hue="Language",  
+        height=10,   
+        aspect=1.8
+    )
 
-    plt.xlabel("Instancja")
-    plt.ylabel("Czas [ms]")
+    plot.set_axis_labels("Instancja", "Czas [ms]", fontsize=24)
 
+    
     ax = plot.ax
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x/1000:.2f}"))  # Zaokrąglanie wartości na osi Y
+    #for collection in ax.collections:
+     #   collection.set_sizes([10]) 
 
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x/1000:.2f}"))
+    #ax.set_ylim(-2500, 45000)
+
+    plot.savefig("wykres.png", dpi=300)
 
     plt.show()
-
     
 
     results = []
@@ -60,18 +71,18 @@ if __name__ == "__main__":
                 
                 if is_normal1 and is_normal2:
                     # Test t-Studenta
-                    stat, p_value = ttest_rel(times1, times2)  # Założenie różnej wariancji
+                    stat, p_value = ttest_rel(times1, times2)  
                     
                     # Zapisz wynik
                     ttest_results.append({
                         "Instance": instance,
                         "t-Stat": stat,
                         "p-value": p_value,
-                        "Significant": p_value < 0.05  # True, jeśli różnica jest istotna
+                        "Significant": p_value < 0.05  
                     })
                 else:
-                    # Test Manna-Whitneya
-                    stat, p_value = wilcoxon(times1, times2, alternative='two-sided')
+                    # Test wilcoxon
+                    stat, p_value = wilcoxon(times1, times2)
                     
                     # Zapisz wynik
                     wilcoxon_results.append({

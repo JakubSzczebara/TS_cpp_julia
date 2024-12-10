@@ -92,7 +92,7 @@ function tabuSearch(graphMatrix::Array{Float64,2})
         if resultCost > bestCostSimilarPaths
             resultPath = currentPath
             resultCost = bestCostSimilarPaths
-            global endTime = time()
+            endTime = time()
         end
     end
 
